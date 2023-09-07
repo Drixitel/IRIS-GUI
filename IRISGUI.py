@@ -16,9 +16,10 @@ root = Tk()
 '''
 ===== Global Variables =====
 '''
+path = "C:\\Users\\slowl\\Desktop\\gitem\\Iris-GUI\\"
 GUIname = "IRIS Interactive Interface"
 GUIsize = "500x500"
-Zappy = "zappy.png"
+Zappy = path + "zappy.png"
 
 winMinSize = 500
 iconSize = 75
