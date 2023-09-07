@@ -9,6 +9,7 @@ IRIS GUI
 # import DrixitTest
 # import IRISInter
 from tkinter import *
+import PIL as pillow
 from PIL import Image, ImageTk
 
 root = Tk()
@@ -17,7 +18,7 @@ root = Tk()
 ===== Global Variables =====
 '''
 # path = "C:\\Users\\slowl\\Desktop\\gitem\\Iris-GUI\\"
-pathM = "C:\\Users\\mpmun\\CodeUsersMpmun\\Iris-GUI\\zappy.png"
+pathM = "C:\\Users\\mpmun\\CodeUsersMpmun\\Iris-GUI\\drixit\\tests\\zappy.png"
 GUIname = "IRIS Interactive Interface"
 GUIsize = "500x500"
 Zappy = path + "zappy.png"
