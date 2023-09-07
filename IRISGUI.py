@@ -69,5 +69,6 @@ for i in range(3):
     root.columnconfigure(i, weight=1, minsize=100)
     root.rowconfigure(i, weight=1, minsize=100)
 
+
 # GUI loop
 root.mainloop()

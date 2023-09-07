@@ -141,6 +141,11 @@ class MainLinux(Main, ABC):
         drive_list = listdir('.')
         return drive_list
 
+class MainDarwin(Main, ABC):
+    def __init__(self):
+        from getpass import getuser
+
+        self.username = getuser()
 
 if __name__ == "__main__":
     if syst() == "Windows":
