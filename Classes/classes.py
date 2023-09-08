@@ -45,14 +45,17 @@ if __name__ == "__main__":
 
     # create an instance of the class available to the program 
     bag_instance = Bag()
+    bag2 = Bag()
     # Check the data 
     print("Bag before adding data", bag_instance.data)
+    print("Bag before adding data", bag2.data)
     # Use a function from the program 
     bag_instance.add(5)
     # View the contents/things you added by calling .data 
     print("Bag data after:", bag_instance.data)
+    print("Bag data after:", bag2.data)
     # Check a value saved in 'bag" 
     print(f'A sammy Costs: ${bag_instance.SubSammy_Cost_dollars}')
 
     # try running main to see what this function does: 
-    main()
+    #main()

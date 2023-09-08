@@ -25,6 +25,10 @@ IRISname = "IRIS"
 MacPath = "\Volumes"
 LinPath = "/dev/bus/usb"
 
+# Failure codes
+FAILED = "FAILED"
+NOT_IN = "NOT_INSERTED"
+
 '''
 ===== FUNCTIONS =====
 '''
@@ -51,7 +55,7 @@ def getOS(varInf = "all"):
     elif varInf == "all":
         return [os.name, platform.system(), platform.release()]
     else:
-        return "FAILED"
+        return FAILED
 
 '''
 parseFile
@@ -101,18 +105,24 @@ def getDevicePath():
     # gets drive directory based on operating system
     if osType == "Windows":
         # Windows system operation
-        fluff = ["Description", "DeviceID", "VolumeName"]
+        USBlist = os.popen("wmic logicaldisk where drivetype=2 get description ,deviceid ,volumename").read()
 
-        USB = os.popen("wmic logicaldisk where drivetype=2 get description ,deviceid ,volumename").read()
-        USBlist = USB.split()
-        USBlist = [i for i in USBlist if i not in fluff]
+        if IRISname not in USBlist:
+            return NOT_IN
+        
+        from win32file import GetDriveType, GetLogicalDrives, DRIVE_REMOVABLE
 
-        print(USBlist)
-        '''newFile = open("TEST", "w+")
-        newFile.write(USB)
-        newFile.close()'''
-
-        return
+        drive_list = []
+        drivebits = GetLogicalDrives()
+        for d in range(1, 26):
+            mask = 1 << d
+            if drivebits & mask:
+                dirname = '%c:\\' % chr(ord('A') + d)
+                t = GetDriveType(dirname)
+                if t == DRIVE_REMOVABLE:
+                    drive_list.append(dirname)
+        
+        return drive_list
 
     elif osType == "Linux":
         # Linux system operation
@@ -123,11 +133,15 @@ def getDevicePath():
         
     elif osType == "Darwin":
         # Mac system operation
-        # Mac system operation
+        deviceList = os.listdir()
+
+        if IRISname not in deviceList:
+            return NOT_IN
+        
         return MacPath + IRISname
 
     else:
-        return "FAILED"
+        return FAILED
     
 
 '''

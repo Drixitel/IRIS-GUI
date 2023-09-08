@@ -117,6 +117,7 @@ class MainWindows(Main, ABC):
                 t = GetDriveType(dirname)
                 if t == DRIVE_REMOVABLE:
                     drive_list.append(dirname)
+        print(drive_list)
         return drive_list
 
 
@@ -146,12 +147,15 @@ class MainDarwin(Main, ABC):
         from getpass import getuser
 
         self.username = getuser()
+        home = "/home/" + self.username + sep
 
 if __name__ == "__main__":
     if syst() == "Windows":
         M = MainWindows()
     if syst() == "Linux":
         M = MainLinux()
+    if syst() == "Darwin":
+        M = MainDarwin()
 
     # import ctypes
     # ctypes.windll.user32.ShowWindow(ctypes.windll.kernel32.GetConsoleWindow(), 6)
