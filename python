@@ -8,3 +8,21 @@ python
 | .__/ \__, |\__|_| |_|\___/|_| |_|
 | |     __/ |                      
 |_|    |___/                       
+
+
+IDEAS
+
+buttons
+1. refresh USB list
+2. manual select directory
+3. deselect all
+4. select all
+5. copy button (prompts directory select and then copies when selected)
+6. delete file button
+7. insert file button (prompts directory select then copies file into IRIS)
+8. read file (?) [current idea: show file contents in window #3]
+
+labels
+1. show selected directory
+2. window with all listed files
+3. window that shows file contents
