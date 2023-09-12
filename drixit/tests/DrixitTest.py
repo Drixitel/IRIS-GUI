@@ -1,5 +1,7 @@
 # From git hub example https://github.com/bestmahdi2/FileStealerUSB2PC/blob/master/FileStealerUSB2PC.py
 # See Shutil https://docs.python.org/3/library/shutil.html
+## Needed install : poetry add pywin32
+## Needed install : progressbar2 
 
 from abc import abstractmethod, ABC
 from platform import system as syst

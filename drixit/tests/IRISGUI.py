@@ -6,10 +6,11 @@ Created on Wed Aug 04 2023
 IRIS GUI
 """
 
-# import DrixitTest
+from DrixitTest import *
 # import IRISInter
 from tkinter import *
 from PIL import Image, ImageTk
+
 
 root = Tk()
 root.grid_rowconfigure(0, weight=1)
@@ -53,9 +54,14 @@ def readFile():
     return
 
 def writeFile():
+    print("WRITING...")
     return
 
 def copyFile():
+    if syst() == "Windows":
+        M = MainWindows()
+    if syst() == "Linux":
+        M = MainLinux()
     return
 
 def annihilateFile():
@@ -64,15 +70,16 @@ def annihilateFile():
 '''
 ===== GUI elements =====
 '''
+
 # images
 zappyPic = Image.open(Zappy)
 zappyIcon = ImageTk.PhotoImage(zappyPic)
-resizedZappyIcon = zappyPic.resize((iconSize,iconSize), Image.ANTIALIAS)
+resizedZappyIcon = zappyPic.resize((iconSize,iconSize), Image.LANCZOS)
 resizedZappy = ImageTk.PhotoImage(resizedZappyIcon)
 
 sammyPic = Image.open(Sammy)
 sammyIcon = ImageTk.PhotoImage(sammyPic)
-resizedSammyIcon = sammyPic.resize((iconSize,iconSize), Image.ANTIALIAS)
+resizedSammyIcon = sammyPic.resize((iconSize,iconSize), Image.LANCZOS)
 resizedSammy = ImageTk.PhotoImage(resizedSammyIcon)
 
 # whatever bar photo
