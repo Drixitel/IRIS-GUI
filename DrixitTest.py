@@ -44,7 +44,8 @@ class Main:
         if drive_list.__len__() == 0:
             print("No USB Connected!!!")
             sleep(4)
-            exit()
+            if __name__ == "__main__":
+                exit()
 
     def Copy(self):
         if len(self.usb_drive_list) > 1:

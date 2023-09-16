@@ -6,14 +6,18 @@ Created on Wed Aug 04 2023
 IRIS GUI
 """
 
-# import DrixitTest
-# import IRISInter
+from IRISInter import *
 from tkinter import *
+from DrixitTest import *
 from PIL import Image, ImageTk
+from tkinter import filedialog as fd
+from tkinter import messagebox as mb
+from tkinter import ttk as tt
 
+# Important details for Tkinter to work (root)
 root = Tk()
-root.grid_rowconfigure(0, weight=1)
-root.columnconfigure(0, weight=1)
+root.grid_rowconfigure(0, weight = 1)
+root.columnconfigure(0, weight = 1)
 
 '''
 ===== Global Variables =====
@@ -29,7 +33,7 @@ winMinSizeX = 500
 winMinSizeY = 650
 iconSize = 75
 titleFontSize = 20
-rowGridSize = 16
+rowGridSize = 15
 columnGridSize = 4
 
 '''
@@ -37,16 +41,55 @@ columnGridSize = 4
 '''
 
 def refreshUSB():
-    return
+    # new code here
+    system = getOS("system")
 
-def manualPath():
+    if system == "Windows":
+        newM = MainWindows()
+    else:
+        newM = MainLinux()
 
-    return
+    pathLabel = Label(mainFrame, text = newM.home, justify = 'center')
+    pathLabel.grid(row = 2, column = 1, columnspan = 2)
+    return newM
+
+def promptPath(whichOne):
+    # prompts user to select folder/directory or file
+    if whichOne == "DIRECTORY":
+        if getOS("system") == "Windows":
+            osDir = "C:\\"
+        elif getOS("system") == "Darwin" or getOS("system") == "Linux":
+            osDir = "\\home"
+
+        directoryName = fd.askdirectory()
+        return directoryName
+    
+    elif whichOne == "FILE":
+        allowedTypes = (('text files', '*.txt'),('All files', '*.*'))
+
+        if getOS("system") == "Windows":
+            osDir = "C:\\"
+        elif getOS("system") == "Darwin" or getOS("system") == "Linux":
+            osDir = "\\home"
+
+        fileName = fd.askopenfilename(title = 'Select File', initialdir=osDir, filetypes = allowedTypes)
+        return fileName
+    
+    else:
+        return "INCORRECT PROMPT"
+    
+def manualSelectDir():
+    directoryName = promptPath("DIRECTORY")
+    pathLabel = Label(mainFrame, text = directoryName, justify = 'center')
+    pathLabel.grid(row = 2, column = 1, columnspan = 2)
+    return directoryName
 
 def deselect():
+    # new code here
     return
 
 def select():
+    # new code here
     return
 
 def readFile():
@@ -56,9 +99,31 @@ def writeFile():
     return
 
 def copyFile():
+    if syst() == "Windows":
+        M = MainWindows()
+        
+    if syst() == "Linux":
+        M = MainLinux()
+
+    pathLabel = Label(mainFrame, text = M.home, justify = 'center')
+    pathLabel.grid(row = 2, column = 1, columnspan = 2)
     return
 
 def annihilateFile():
+    warningBox = mb.askokcancel(title = "Are you sure about this, chief?", 
+                                   message = "This action cannot be undone! \nDo you wish to proceed?", 
+                                   icon = mb.WARNING)
+    
+    # This section deletes the files
+    
+    if warningBox:
+        mb.showinfo(title = "Annihilated",
+                    message = "Files deleted successfully")
+        return
+    return
+
+def exitGui():
+    exit()
     return
 
 '''
@@ -89,10 +154,8 @@ root.minsize(winMinSizeX, winMinSizeY)
 mainFrame = Frame(root)
 mainFrame.grid(sticky='news')
 
-mainFrame.columnconfigure(0, weight = 1)
-mainFrame.columnconfigure(1, weight = 3)
-mainFrame.columnconfigure(2, weight = 3)
-mainFrame.columnconfigure(3, weight = 1)
+for i in range(columnGridSize):
+    mainFrame.columnconfigure(i, weight = 1)
 
 for i in range(rowGridSize):
     mainFrame.grid_rowconfigure(i, weight = 1)
@@ -107,7 +170,7 @@ ucsc.grid(row = 0, column = 3)
 exeName = Label(mainFrame, text = GUIname, font = ["Comic sans MS", 14], justify = 'center')
 exeName.grid(row = 0, column = 1, columnspan = 2)
 
-# Table button [future addition] (row 1)
+# Tabular button [future addition] (row 1)
 
 # Mount USB button (row 2)
 refreshButton = Button(mainFrame, text = "Refresh USB", command = refreshUSB)
@@ -116,7 +179,7 @@ refreshButton.grid(row = 2, column = 0)
 pathLabel = Label(mainFrame, text = "No path selected", justify = 'center')
 pathLabel.grid(row = 2, column = 1, columnspan = 2)
 
-choosePath = Button(mainFrame, text = "Manual Path", command = manualPath)
+choosePath = Button(mainFrame, text = "Manual Path", command = manualSelectDir)
 choosePath.grid(row = 2, column = 3)
 
 # File display window + deselect/select all buttons (row 3 - 6)
@@ -127,7 +190,7 @@ selectAll = Button(mainFrame, text = "Select All", command = select)
 selectAll.grid(row = 4, column = 0)
 
 # Display window 1
-canvasFrame1 = Frame(mainFrame, bg="white")
+canvasFrame1 = Frame(mainFrame, bg="yellow")
 canvasFrame1.grid(row = 4, column = 1, rowspan = 4, columnspan = 3, pady=(5, 0))
 canvasFrame1.grid_propagate(False)
 
@@ -148,27 +211,31 @@ listFrame.update_idletasks()
 
 # Read, Write, Copy, Annihilate buttons (row 8)
 readButton = Button(mainFrame, text = "Read File", command = readFile)
-readButton.grid(row = 9, column = 0)
+readButton.grid(row = 7, column = 0)
 
 writeButton  = Button(mainFrame, text = "Insert File", command = writeFile)
-writeButton.grid(row = 9, column = 1)
+writeButton.grid(row = 7, column = 1)
 
 copyButton = Button(mainFrame, text = "Copy File", command = copyFile)
-copyButton.grid(row = 9, column = 2)
+copyButton.grid(row = 7, column = 2)
 
 annihilateButton  = Button(mainFrame, text = "Annihilate", command = annihilateFile)
-annihilateButton.grid(row = 9, column = 3)
+annihilateButton.grid(row = 7, column = 3)
 
 # Spacer (row 9)
 
 # Read window (row 10 - 13)
+newFrame = Frame(mainFrame, bg = "yellow")
+newFrame.grid(row = 9, column = 1)
 
+# Exit button (row 14)
+exitButton = Button(mainFrame, text = "Exit GUI", command = exitGui)
+exitButton.grid(row = 13, column = 1, columnspan = 2)
 
-# spacer (row 14)
+# Spacer (row 15)
 
 '''
 ===== Runs GUI =====
 '''
-
 # GUI loop
 root.mainloop()
