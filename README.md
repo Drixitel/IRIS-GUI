@@ -1,4 +1,4 @@
-# IRIS GUI
+# <img  src="images/image.png"  alt="Alt text"  title="Optional title"  style="display: inline-block; margin: 0 auto 0 0; max-width: 100px">  IRIS GUI 
 Notes
 - Tested on Windows (10,11)
 - Tested on Victor's and Michelle's computer 
