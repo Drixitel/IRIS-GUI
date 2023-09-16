@@ -7,7 +7,6 @@ IRIS GUI
 """
 
 from DrixitTest import *
-# import IRISInter
 from tkinter import *
 from PIL import Image, ImageTk
 
