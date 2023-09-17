@@ -99,7 +99,6 @@ def readFile():
 
 def writeFile():
     from shutil import copyfile
-    fileDirectory = promptPath("FILE")
     USBDirectory = pathLabel.cget("text")
 
     if USBDirectory == NO_PATH:
@@ -108,17 +107,10 @@ def writeFile():
                                      icon = mb.WARNING)
         return
 
-    if syst() == "Windows":
-        copyfile(fileDirectory)
-        return
-    elif syst() == "Linux":
-        copyfile(fileDirectory)
-        return
-    elif syst() == "Darwin":
-        copyfile(fileDirectory)
-        return
-    else:
-        return
+    fileDirectory = promptPath("FILE")
+
+    copyfile(fileDirectory, USBDirectory)
+    return
     
 def copyFile():
     # THIS STEALS THE FILES!! BEWARE!!!!
@@ -126,8 +118,6 @@ def copyFile():
         M = MainWindows()
     elif syst() == "Linux":
         M = MainLinux()
-
-    # add smth for detecting no USB
 
     pathLabel = Label(mainFrame, text = M.home, justify = 'center')
     pathLabel.grid(row = 2, column = 1, columnspan = 2)
@@ -237,7 +227,7 @@ listFrame.update_idletasks()
 readButton = Button(mainFrame, text = "Read File", command = readFile)
 readButton.grid(row = 7, column = 0)
 
-writeButton  = Button(mainFrame, text = "Insert File") #, command = writeFile
+writeButton  = Button(mainFrame, text = "Insert File", command = writeFile)
 writeButton.grid(row = 7, column = 1)
 
 copyButton = Button(mainFrame, text = "Copy File", command = copyFile) # THIS STEALS THE FILES!! BEWARE!!!!
