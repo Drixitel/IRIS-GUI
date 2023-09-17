@@ -36,6 +36,8 @@ titleFontSize = 20
 rowGridSize = 15
 columnGridSize = 4
 
+NO_PATH = "No path selected"
+
 '''
 ===== FUNCTIONS =====
 '''
@@ -96,13 +98,25 @@ def readFile():
     return
 
 def writeFile():
-    return
+    from shutil import copyfile
+    USBDirectory = pathLabel.cget("text")
 
+    if USBDirectory == NO_PATH:
+        mb.showwarning(title = "No USB", 
+                                     message = "No USB path detected or selected.\nPlease insert USB or manually select path.", 
+                                     icon = mb.WARNING)
+        return
+
+    fileDirectory = promptPath("FILE")
+
+    copyfile(fileDirectory, USBDirectory)
+    return
+    
 def copyFile():
+    # THIS STEALS THE FILES!! BEWARE!!!!
     if syst() == "Windows":
         M = MainWindows()
-        
-    if syst() == "Linux":
+    elif syst() == "Linux":
         M = MainLinux()
 
     pathLabel = Label(mainFrame, text = M.home, justify = 'center')
@@ -176,7 +190,7 @@ exeName.grid(row = 0, column = 1, columnspan = 2)
 refreshButton = Button(mainFrame, text = "Refresh USB", command = refreshUSB)
 refreshButton.grid(row = 2, column = 0)
 
-pathLabel = Label(mainFrame, text = "No path selected", justify = 'center')
+pathLabel = Label(mainFrame, text = NO_PATH, justify = 'center')
 pathLabel.grid(row = 2, column = 1, columnspan = 2)
 
 choosePath = Button(mainFrame, text = "Manual Path", command = manualSelectDir)
@@ -216,7 +230,7 @@ readButton.grid(row = 7, column = 0)
 writeButton  = Button(mainFrame, text = "Insert File", command = writeFile)
 writeButton.grid(row = 7, column = 1)
 
-copyButton = Button(mainFrame, text = "Copy File", command = copyFile)
+copyButton = Button(mainFrame, text = "Copy File", command = copyFile) # THIS STEALS THE FILES!! BEWARE!!!!
 copyButton.grid(row = 7, column = 2)
 
 annihilateButton  = Button(mainFrame, text = "Annihilate", command = annihilateFile)
