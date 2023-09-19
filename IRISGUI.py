@@ -115,7 +115,9 @@ def select():
 
 def readFile():
     path = pathLabel.cget("text") + "/"
+    extensions = [".txt"]
 
+    # Checks listbox selection length
     if len(fileListbox.curselection()) > 1:
         mb.showerror(title = "Cannot read multiple files", 
                      message = "GUI cannot display multiple files. Please select only one (1) file.", 
@@ -126,8 +128,27 @@ def readFile():
                      message = "Please select only one (1) file.", 
                      icon = mb.WARNING)
         return
+    
+    # Gets cursor selected file
+    selectedFile = fileListbox.get(fileListbox.curselection())
+    
+    # Checks file type or directory
+    _, ext = os.path.splitext(selectedFile)
+    print(ext)
+    if ext not in extensions and len(ext) > 0:
+        errorMsg = "Incorrect file type: %s\nPlease select only one (1) file." % (ext)
+        mb.showerror(title = "Incorrect file type", 
+                     message = errorMsg, 
+                     icon = mb.WARNING)
+        return
+    elif ext not in extensions and len(ext) == 0:
+        errorMsg = "Incorrect file type: Directory\nPlease select only one (1) file."
+        mb.showerror(title = "Incorrect file type", 
+                     message = errorMsg, 
+                     icon = mb.WARNING)
+        return
 
-    filePath = path + fileListbox.get(fileListbox.curselection())
+    filePath = path + selectedFile
 
     with open(filePath, "r") as file:
         lines = file.readlines()
