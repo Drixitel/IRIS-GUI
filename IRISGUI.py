@@ -42,6 +42,13 @@ NO_PATH = "No path selected"
 ===== FUNCTIONS =====
 '''
 
+def populateFiles(directory):
+    fileListbox.delete(0, END)  # Clear previous entries
+
+    for item in os.listdir(directory):
+        fileListbox.insert(END, item)
+    return
+
 def refreshUSB():
     # new code here
     system = getOS("system")
@@ -51,8 +58,14 @@ def refreshUSB():
     else:
         newM = MainLinux()
 
-    pathLabel = Label(mainFrame, text = newM.home, justify = 'center')
-    pathLabel.grid(row = 2, column = 1, columnspan = 2)
+    pathLabel.config(text = newM.home)
+
+    readButton.config(state=NORMAL)
+    copyButton.config(state=NORMAL)
+    writeButton.config(state=NORMAL)
+    annihilateButton.config(state=NORMAL)
+
+    populateFiles(pathLabel.cget("text"))
     return newM
 
 def promptPath(whichOne):
@@ -82,34 +95,74 @@ def promptPath(whichOne):
     
 def manualSelectDir():
     directoryName = promptPath("DIRECTORY")
-    pathLabel = Label(mainFrame, text = directoryName, justify = 'center')
-    pathLabel.grid(row = 2, column = 1, columnspan = 2)
-    return directoryName
+    pathLabel.config(text = directoryName)
+
+    readButton.config(state=NORMAL)
+    copyButton.config(state=NORMAL)
+    writeButton.config(state=NORMAL)
+    annihilateButton.config(state=NORMAL)
+
+    populateFiles(pathLabel.cget("text"))
+    return
 
 def deselect():
-    # new code here
+    fileListbox.selection_clear(0, END)
     return
 
 def select():
-    # new code here
+    fileListbox.select_set(0, END)
     return
 
 def readFile():
+    path = pathLabel.cget("text") + "/"
+
+    if len(fileListbox.curselection()) > 1:
+        mb.showerror(title = "Cannot read multiple files", 
+                     message = "GUI cannot display multiple files. Please select only one (1) file.", 
+                     icon = mb.WARNING)
+        return
+    elif len(fileListbox.curselection()) == 0:
+        mb.showerror(title = "Please select a file", 
+                     message = "Please select only one (1) file.", 
+                     icon = mb.WARNING)
+        return
+
+    filePath = path + fileListbox.get(fileListbox.curselection())
+
+    with open(filePath, "r") as file:
+        lines = file.readlines()
+            
+    fileReadbox.delete(0, END)
+
+    for line in lines:
+        fileReadbox.insert(END, line.strip())
+    
+    clearRead.config(state=NORMAL)
     return
 
+def clearReadFile():
+    fileReadbox.delete(0, END)
+    clearRead.config(state=DISABLED)
+    return
+
+def getSetDir():
+    print(pathLabel.cget("text"))
+    return pathLabel.cget("text")
+
 def writeFile():
-    from shutil import copyfile
-    USBDirectory = pathLabel.cget("text")
+    from shutil import copy
+    USBDirectory = getSetDir()
 
     if USBDirectory == NO_PATH:
-        mb.showwarning(title = "No USB", 
+        mb.showwarning(title = "No Path", 
                                      message = "No USB path detected or selected.\nPlease insert USB or manually select path.", 
                                      icon = mb.WARNING)
         return
 
     fileDirectory = promptPath("FILE")
 
-    copyfile(fileDirectory, USBDirectory)
+    copy(fileDirectory, USBDirectory)
+    populateFiles(pathLabel.cget("text"))
     return
     
 def copyFile():
@@ -119,8 +172,7 @@ def copyFile():
     elif syst() == "Linux":
         M = MainLinux()
 
-    pathLabel = Label(mainFrame, text = M.home, justify = 'center')
-    pathLabel.grid(row = 2, column = 1, columnspan = 2)
+    pathLabel.config(text = M.home)
     return
 
 def annihilateFile():
@@ -204,43 +256,46 @@ selectAll = Button(mainFrame, text = "Select All", command = select)
 selectAll.grid(row = 4, column = 0)
 
 # Display window 1
-canvasFrame1 = Frame(mainFrame, bg="yellow")
-canvasFrame1.grid(row = 4, column = 1, rowspan = 4, columnspan = 3, pady=(5, 0))
-canvasFrame1.grid_propagate(False)
+fileListbox = Listbox(mainFrame, width = 20, selectmode = EXTENDED)
+fileListbox.grid(row = 3, column = 1, rowspan = 4, columnspan = 2, sticky='news')
 
-windowCanvas1 = Canvas(canvasFrame1, bg="white")
-windowCanvas1.grid(row=0, column=0, sticky="news")
+scrollBar1 = Scrollbar(fileListbox, orient=VERTICAL)
+scrollBar1.pack(side=RIGHT, fill=Y)
 
-vsb1 = Scrollbar(windowCanvas1, orient = "vertical", command = windowCanvas1.yview)
-vsb1.grid(row = 0, column = 1, sticky='ns')
-windowCanvas1.configure(yscrollcommand = vsb1.set)
+fileListbox.config(yscrollcommand = scrollBar1.set)
+scrollBar1.config(command = fileListbox.yview)
 
-listFrame = Frame(windowCanvas1)
-windowCanvas1.create_window((0, 0), window = listFrame, anchor='nw')
-
-listFrame.update_idletasks()
-
-#canvasFrame1.config(scrollregion = canvasFrame1.bbox("all"))
 # Spacer (row 7)
 
 # Read, Write, Copy, Annihilate buttons (row 8)
-readButton = Button(mainFrame, text = "Read File", command = readFile)
+readButton = Button(mainFrame, text = "Read File", command = readFile, state=DISABLED)
 readButton.grid(row = 7, column = 0)
 
-writeButton  = Button(mainFrame, text = "Insert File", command = writeFile)
+writeButton  = Button(mainFrame, text = "Insert File", command = writeFile, state=DISABLED)
 writeButton.grid(row = 7, column = 1)
 
-copyButton = Button(mainFrame, text = "Copy File", command = copyFile) # THIS STEALS THE FILES!! BEWARE!!!!
+copyButton = Button(mainFrame, text = "Copy File", command = copyFile, state=DISABLED) # THIS STEALS THE FILES!! BEWARE!!!!
 copyButton.grid(row = 7, column = 2)
 
-annihilateButton  = Button(mainFrame, text = "Annihilate", command = annihilateFile)
+annihilateButton  = Button(mainFrame, text = "Annihilate", command = annihilateFile, state=DISABLED)
 annihilateButton.grid(row = 7, column = 3)
 
 # Spacer (row 9)
 
 # Read window (row 10 - 13)
-newFrame = Frame(mainFrame, bg = "yellow")
-newFrame.grid(row = 9, column = 1)
+fileReadbox = Listbox(mainFrame, width = 40)
+fileReadbox.bindtags((fileReadbox, mainFrame, "all"))
+fileReadbox.grid(row = 9, column = 1, rowspan = 4, columnspan = 2, sticky='news')
+
+scrollBar2 = Scrollbar(fileReadbox, orient=VERTICAL)
+scrollBar2.pack(side=RIGHT, fill=Y)
+
+fileReadbox.config(yscrollcommand = scrollBar2.set)
+scrollBar2.config(command = fileReadbox.yview)
+
+# Clear text box button (row 13)
+clearRead = Button(mainFrame, text="Clear Read Window", command=clearReadFile, state=DISABLED)
+clearRead.grid(row = 12, column = 0)
 
 # Exit button (row 14)
 exitButton = Button(mainFrame, text = "Exit GUI", command = exitGui)
