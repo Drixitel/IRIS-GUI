@@ -36,6 +36,8 @@ titleFontSize = 20
 rowGridSize = 15
 columnGridSize = 4
 
+DEBUG_MODE = True
+
 NO_PATH = "No path selected"
 
 '''
@@ -197,13 +199,24 @@ def copyFile():
     return
 
 def annihilateFile():
+    path = pathLabel.cget("text")
+    if path == NO_PATH:
+        mb.showwarning(title = "No Path", 
+                                     message = "No USB path detected or selected.\nPlease insert USB or manually select path.", 
+                                     icon = mb.WARNING)
+        return
+
     warningBox = mb.askokcancel(title = "Are you sure about this, chief?", 
                                    message = "This action cannot be undone! \nDo you wish to proceed?", 
                                    icon = mb.WARNING)
-    
     # This section deletes the files
-    
+    from os import remove
     if warningBox:
+        for selection in fileListbox.curselection():
+            os.remove(path + fileListbox.get(selection))
+        
+        populateFiles(pathLabel.cget("text"))
+
         mb.showinfo(title = "Annihilated",
                     message = "Files deleted successfully")
         return
@@ -211,6 +224,26 @@ def annihilateFile():
 
 def exitGui():
     exit()
+    return
+
+#Debugging command
+def Debug():
+    filename = "DEBUG"
+    path = pathLabel.cget("text")
+    print(path)
+
+    if path == NO_PATH:
+        mb.showwarning(title = "No Path", 
+                                     message = "No USB path detected or selected.\nPlease insert USB or manually select path.", 
+                                     icon = mb.WARNING)
+
+    inc = 1
+    for i in range(5):
+        with open(path + filename + str(inc), "w+") as file:
+            file.write("teehee")
+            print(inc)
+
+    populateFiles(pathLabel.cget("text"))
     return
 
 '''
@@ -323,6 +356,8 @@ exitButton = Button(mainFrame, text = "Exit GUI", command = exitGui)
 exitButton.grid(row = 13, column = 1, columnspan = 2)
 
 # Spacer (row 15)
+debug_Button = Button(mainFrame, text = "DEBUG", command = Debug())
+debug_Button.grid(row = 14, column = 0, columnspan = 4)
 
 '''
 ===== Runs GUI =====
