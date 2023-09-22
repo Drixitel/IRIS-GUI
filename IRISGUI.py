@@ -12,7 +12,6 @@ from DrixitTest import *
 from PIL import Image, ImageTk
 from tkinter import filedialog as fd
 from tkinter import messagebox as mb
-from tkinter import ttk as tt
 
 # Important details for Tkinter to work (root)
 root = Tk()
@@ -95,15 +94,18 @@ def promptPath(whichOne):
     else:
         return "INCORRECT PROMPT"
     
-def manualSelectDir():
-    directoryName = promptPath("DIRECTORY")
-    pathLabel.config(text = directoryName)
-
+def enableButtons():
     readButton.config(state=NORMAL)
     copyButton.config(state=NORMAL)
     writeButton.config(state=NORMAL)
     annihilateButton.config(state=NORMAL)
+    return
+    
+def manualSelectDir():
+    directoryName = promptPath("DIRECTORY")
+    pathLabel.config(text = directoryName)
 
+    enableButtons()
     populateFiles(pathLabel.cget("text"))
     return
 
@@ -213,7 +215,7 @@ def annihilateFile():
     from os import remove
     if warningBox:
         for selection in fileListbox.curselection():
-            os.remove(path + fileListbox.get(selection))
+            os.remove(path + "\\" + fileListbox.get(selection))
         
         populateFiles(pathLabel.cget("text"))
 
@@ -228,7 +230,10 @@ def exitGui():
 
 #Debugging command
 def Debug():
-    filename = "DEBUG"
+    filename = "\\DEBUG"
+    directoryName = "C:\\Users\\slowl\\Desktop\\Work\\IRIS test"
+    pathLabel.config(text = directoryName)
+
     path = pathLabel.cget("text")
     print(path)
 
@@ -236,14 +241,23 @@ def Debug():
         mb.showwarning(title = "No Path", 
                                      message = "No USB path detected or selected.\nPlease insert USB or manually select path.", 
                                      icon = mb.WARNING)
+        return
 
-    inc = 1
-    for i in range(5):
+    for inc in range(1, 5):
         with open(path + filename + str(inc), "w+") as file:
             file.write("teehee")
-            print(inc)
+        file.close()
+        print(inc)
 
+    enableButtons()
     populateFiles(pathLabel.cget("text"))
+    return
+
+def Debug2():
+    directoryName = "C:\\Users\\slowl\\Desktop\\Work\\IRIS test"
+    pathLabel.config(text = directoryName)
+    populateFiles(directoryName)
+    enableButtons()
     return
 
 '''
@@ -356,8 +370,14 @@ exitButton = Button(mainFrame, text = "Exit GUI", command = exitGui)
 exitButton.grid(row = 13, column = 1, columnspan = 2)
 
 # Spacer (row 15)
-debug_Button = Button(mainFrame, text = "DEBUG", command = Debug())
-debug_Button.grid(row = 14, column = 0, columnspan = 4)
+debug_Button = Button(mainFrame, text = "DEBUG", command = Debug)
+debug_Button2 = Button(mainFrame, text = "DEBUG REFRESH", command = Debug2)
+if DEBUG_MODE == True:
+    debug_Button.grid(row = 14, column = 0, columnspan = 2)
+    debug_Button2.grid(row = 14, column = 2, columnspan = 2)
+else:
+    debug_Button.grid_forget()
+    debug_Button2.grid_forget()
 
 '''
 ===== Runs GUI =====
