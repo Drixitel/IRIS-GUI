@@ -12,6 +12,7 @@ from DrixitTest import *
 from PIL import Image, ImageTk
 from tkinter import filedialog as fd
 from tkinter import messagebox as mb
+from tkinter import ttk as tk
 
 # Important details for Tkinter to work (root)
 root = Tk()
@@ -35,7 +36,7 @@ titleFontSize = 20
 rowGridSize = 15
 columnGridSize = 4
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 NO_PATH = "No path selected"
 
@@ -284,15 +285,45 @@ root.geometry(GUIsize)
 # minimum GUI size
 root.minsize(winMinSizeX, winMinSizeY)
 
+'''
+===== Main Tab =====
+'''
 # Main GUI frame
 mainFrame = Frame(root)
 mainFrame.grid(sticky='news')
 
-for i in range(columnGridSize):
-    mainFrame.columnconfigure(i, weight = 1)
+# Turns the GUI into a tabbed GUI
+noteBook = tk.Notebook(mainFrame)
 
+mainTab = tk.Frame(noteBook)
+plotTab = tk.Frame(noteBook)
+
+noteBook.add(mainTab, text = "General")
+noteBook.add(plotTab, text = "Live Data")
+
+noteBook.grid(row = 1, column = 0, columnspan = columnGridSize, rowspan = rowGridSize, sticky='news')
+
+# configures resize for tabs
+for i in range(columnGridSize):
+    noteBook.grid_columnconfigure(i, weight=1)
 for i in range(rowGridSize):
-    mainFrame.grid_rowconfigure(i, weight = 1)
+    noteBook.grid_rowconfigure(i, weight=1)
+
+for i in range(columnGridSize):
+    mainTab.grid_columnconfigure(i, weight=1)
+for i in range(rowGridSize):
+    mainTab.grid_rowconfigure(i, weight=1)
+
+for i in range(columnGridSize):
+    plotTab.grid_columnconfigure(i, weight=1)
+for i in range(rowGridSize):
+    plotTab.grid_rowconfigure(i, weight=1)
+
+# configures resize for main frame
+for i in range(columnGridSize):
+    mainFrame.grid_columnconfigure(i, weight=1)
+for i in range(rowGridSize):
+    mainFrame.grid_rowconfigure(i, weight=1)
 
 # Icons, name, etc. (row 0)
 logo = Label(mainFrame, image = resizedZappy, height = iconSize, width = iconSize)
@@ -304,27 +335,25 @@ ucsc.grid(row = 0, column = 3)
 exeName = Label(mainFrame, text = GUIname, font = ["Comic sans MS", 14], justify = 'center')
 exeName.grid(row = 0, column = 1, columnspan = 2)
 
-# Tabular button [future addition] (row 1)
-
 # Mount USB button (row 2)
-refreshButton = Button(mainFrame, text = "Refresh USB", command = refreshUSB)
+refreshButton = Button(mainTab, text = "Refresh USB", command = refreshUSB)
 refreshButton.grid(row = 2, column = 0)
 
-pathLabel = Label(mainFrame, text = NO_PATH, justify = 'center')
+pathLabel = Label(mainTab, text = NO_PATH, justify = 'center')
 pathLabel.grid(row = 2, column = 1, columnspan = 2)
 
-choosePath = Button(mainFrame, text = "Manual Path", command = manualSelectDir)
+choosePath = Button(mainTab, text = "Manual Path", command = manualSelectDir)
 choosePath.grid(row = 2, column = 3)
 
 # File display window + deselect/select all buttons (row 3 - 6)
-deselectAll = Button(mainFrame, text = "Deselect All", command = deselect)
+deselectAll = Button(mainTab, text = "Deselect All", command = deselect)
 deselectAll.grid(row = 3, column = 0)
 
-selectAll = Button(mainFrame, text = "Select All", command = select)
+selectAll = Button(mainTab, text = "Select All", command = select)
 selectAll.grid(row = 4, column = 0)
 
 # Display window 1
-fileListbox = Listbox(mainFrame, width = 20, selectmode = EXTENDED)
+fileListbox = Listbox(mainTab, width = 20, selectmode = EXTENDED)
 fileListbox.grid(row = 3, column = 1, rowspan = 4, columnspan = 2, sticky='news')
 
 scrollBar1 = Scrollbar(fileListbox, orient=VERTICAL)
@@ -336,23 +365,23 @@ scrollBar1.config(command = fileListbox.yview)
 # Spacer (row 7)
 
 # Read, Write, Copy, Annihilate buttons (row 8)
-readButton = Button(mainFrame, text = "Read File", command = readFile, state=DISABLED)
+readButton = Button(mainTab, text = "Read File", command = readFile, state=DISABLED)
 readButton.grid(row = 7, column = 0)
 
-writeButton  = Button(mainFrame, text = "Insert File", command = writeFile, state=DISABLED)
+writeButton  = Button(mainTab, text = "Insert File", command = writeFile, state=DISABLED)
 writeButton.grid(row = 7, column = 1)
 
-copyButton = Button(mainFrame, text = "Copy File", command = copyFile, state=DISABLED) # THIS STEALS THE FILES!! BEWARE!!!!
+copyButton = Button(mainTab, text = "Copy File", command = copyFile, state=DISABLED) # THIS STEALS THE FILES!! BEWARE!!!!
 copyButton.grid(row = 7, column = 2)
 
-annihilateButton  = Button(mainFrame, text = "Annihilate", command = annihilateFile, state=DISABLED)
+annihilateButton  = Button(mainTab, text = "Annihilate", command = annihilateFile, state=DISABLED)
 annihilateButton.grid(row = 7, column = 3)
 
 # Spacer (row 9)
 
 # Read window (row 10 - 13)
-fileReadbox = Listbox(mainFrame, width = 40)
-fileReadbox.bindtags((fileReadbox, mainFrame, "all"))
+fileReadbox = Listbox(mainTab, width = 40)
+fileReadbox.bindtags((fileReadbox, mainTab, "all"))
 fileReadbox.grid(row = 9, column = 1, rowspan = 4, columnspan = 2, sticky='news')
 
 scrollBar2 = Scrollbar(fileReadbox, orient=VERTICAL)
@@ -362,22 +391,29 @@ fileReadbox.config(yscrollcommand = scrollBar2.set)
 scrollBar2.config(command = fileReadbox.yview)
 
 # Clear text box button (row 13)
-clearRead = Button(mainFrame, text="Clear Read Window", command=clearReadFile, state=DISABLED)
+clearRead = Button(mainTab, text="Clear Read Window", command=clearReadFile, state=DISABLED)
 clearRead.grid(row = 12, column = 0)
 
 # Exit button (row 14)
-exitButton = Button(mainFrame, text = "Exit GUI", command = exitGui)
+exitButton = Button(mainTab, text = "Exit GUI", command = exitGui)
 exitButton.grid(row = 13, column = 1, columnspan = 2)
 
 # Spacer (row 15)
-debug_Button = Button(mainFrame, text = "DEBUG", command = Debug)
-debug_Button2 = Button(mainFrame, text = "DEBUG REFRESH", command = Debug2)
+
+# Debug buttons
+debug_Button = Button(mainTab, text = "DEBUG", command = Debug)
+debug_Button2 = Button(mainTab, text = "DEBUG REFRESH", command = Debug2)
 if DEBUG_MODE == True:
     debug_Button.grid(row = 14, column = 0, columnspan = 2)
     debug_Button2.grid(row = 14, column = 2, columnspan = 2)
 else:
     debug_Button.grid_forget()
     debug_Button2.grid_forget()
+
+'''
+===== Plotting tab =====
+'''
+# 
 
 '''
 ===== Runs GUI =====
